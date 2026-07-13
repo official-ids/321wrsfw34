@@ -1833,7 +1833,7 @@ end
 
 -- Выполнение команды
 function CommandSystem.execute(input)
-	if not string.startswith(input, CommandSystem.Prefix) then
+	if input:sub(1, #CommandSystem.Prefix) ~= CommandSystem.Prefix then
 		return false
 	end
 
@@ -2414,5 +2414,21 @@ initialize()
 -- 📦 СЕКЦИЯ 25: ЭКСПОРТ ГЛОБАЛЬНОГО ОБЪЕКТА
 --------------------------------------------------------------------------------
 _G.ChatSystem = ChatSystem
+
+-- 🔥 ДОБАВИТЬ В САМЫЙ НИЗ: Перехват команд в новом TextChatService
+TextChatService.OnIncomingMessage = function(message: TextChatMessage)
+	local text = message.Text
+	
+	-- Если сообщение начинается с "/", обрабатываем как команду
+	if text:sub(1, 1) == "/" then
+		CommandSystem.execute(text)
+		return nil -- Возвращаем nil, чтобы команда НЕ писалась в чат
+	end
+	
+	-- Если это обычное сообщение, запускаем наши системы (упоминания, статистика)
+	MessageHandler.onIncoming(message)
+	
+	return message -- Возвращаем сообщение, чтобы оно отобразилось
+end
 
 return ChatSystem
