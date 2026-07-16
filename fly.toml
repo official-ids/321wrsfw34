@@ -1,0 +1,17 @@
+app = "oris-peer-server"
+primary_region = "ams" # Выберите ближайший к вам регион (например, AMS, FRA)
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'off' # ВАЖНО: сервер не должен засыпать, иначе пиры потеряют связь
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "15s"
+  method = "GET"
+  path = "/myapp"
+  protocol = "http"
+  timeout = "2s"
